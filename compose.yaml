@@ -1,10 +1,17 @@
 services:
-  django:
+  apache:
     build: .
     ports:
-      - "8000:80"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    env_file:
-      - docker.env
-    restart: always
+      - "${BODY_PORT}:80"
+    environment:
+      DJANGO_DEBUG: 1
+      DJANGO_ALLOWED_HOSTS: ${BODY_URL}
+      DB_HOST: db
+      DB_NAME: body
+      DB_USER: body
+      DB_PASSWORD: body
+  db:
+    image: postgres:18.4
+    environment:
+      POSTGRES_PASSWORD: body
+      POSTGRES_USER: body

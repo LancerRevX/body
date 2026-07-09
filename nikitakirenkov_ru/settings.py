@@ -15,9 +15,6 @@ from os import environ
 import sys
 
 from django.utils.translation import gettext_lazy as _
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,11 +29,11 @@ SECRET_KEY = (
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get("DEBUG")
+DEBUG = int(environ.get("DJANGO_DEBUG", 1))
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-if environ.get("ALLOWED_HOSTS"):
-    ALLOWED_HOSTS += environ.get("ALLOWED_HOSTS").split(",")
+if environ.get("DJANGO_ALLOWED_HOSTS"):
+    ALLOWED_HOSTS += environ.get("ALLOWED_HOSTS", '').split(",")
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 
 INTERNAL_IPS = [
@@ -66,7 +63,7 @@ INSTALLED_APPS = [
 
 TAILWIND_APP_NAME = "theme"
 
-NPM_BIN_PATH = environ["NPM_BIN_PATH"]
+NPM_BIN_PATH = environ.get("NPM_BIN_PATH", None)
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -116,7 +113,7 @@ LOGIN_URL = "/auth/login/"
 
 DATABASES = {
     "default": {
-        "ENGINE": environ.get("DB_ENGINE"),
+        "ENGINE": environ.get("DB_ENGINE", 'django.db.backends.postgresql'),
         "NAME": environ.get("DB_NAME"),
         "USER": environ.get("DB_USER"),
         "PASSWORD": environ.get("DB_PASSWORD"),

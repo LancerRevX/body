@@ -5,5 +5,4 @@ django-browser-reload
 django-tailwind
 django-htmx
 jinjax
-python-dotenv
 psycopg2
