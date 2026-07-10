@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-t@^iuc40=bc_b0)zh@^ld5(v$4kr6_6r+ganat=+)oh9-mzxc1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(environ.get("DJANGO_DEBUG", True))
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"] + environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"] + environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 
 INTERNAL_IPS = [
