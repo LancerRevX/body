@@ -7,6 +7,7 @@ services:
     environment:
       DJANGO_DEBUG: 1
       DJANGO_ALLOWED_HOSTS: ${BODY_URL}
+      DB_ENGINE: django.db.backends.postgresql
       DB_HOST: db
       DB_NAME: body
       DB_USER: body

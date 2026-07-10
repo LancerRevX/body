@@ -1,10 +1,14 @@
 .venv/
+.vscode/
 **/__pycache__/
-node_modules/
+**/node_modules/
+.git/
 package.json
 package-lock.json
-.gitignore
+.prettierrc.json
+**/.gitignore
 .dockerignore
 Dockerfile
 compose.yaml
 .env
+database.sqlite3
