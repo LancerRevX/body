@@ -53,7 +53,6 @@ RUN python manage.py collectstatic
 # python manage.py migrate
 # CMD [ "python", "manage.py runserver" ]
 RUN chown www-data:www-data /var/www/html/django.log
-RUN a2enmod wsgi
 CMD ["apachectl",  "-DFOREGROUND"]
 
 # EOF
