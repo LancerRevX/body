@@ -4,6 +4,7 @@ node_modules/
 package.json
 package-lock.json
 .gitignore
+.dockerignore
 Dockerfile
+compose.yaml
 .env
-docker.env

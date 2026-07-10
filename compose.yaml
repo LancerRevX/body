@@ -3,6 +3,7 @@ services:
     build: .
     ports:
       - "${BODY_PORT}:80"
+      - "8000:8000"
     environment:
       DJANGO_DEBUG: 1
       DJANGO_ALLOWED_HOSTS: ${BODY_URL}

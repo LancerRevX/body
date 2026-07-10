@@ -17,7 +17,10 @@ def insert_food_items(apps, schema_editor):
     Group = apps.get_model("food", "Group")
     User = apps.get_model(settings.AUTH_USER_MODEL)
 
-    user = User.objects.get(username="nikita")
+    try:
+        user = User.objects.get(username="nikita")
+    except User.DoesNotExist:
+        user = User.objects.create_superuser("nikita", password="nikita")
 
     for group_data in GROUPS:
         user.food_groups.create(**group_data)
@@ -58,7 +61,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("food", "0001_initial"),
-        ('users', '0001_insert_users')
     ]
 
     operations = [

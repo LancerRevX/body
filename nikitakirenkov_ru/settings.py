@@ -24,16 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-t@^iuc40=bc_b0)zh@^ld5(v$4kr6_6r+ganat=+)oh9-mzxc1"
-)
+SECRET_KEY = "django-insecure-t@^iuc40=bc_b0)zh@^ld5(v$4kr6_6r+ganat=+)oh9-mzxc1"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(environ.get("DJANGO_DEBUG", 1))
+DEBUG = bool(environ.get("DJANGO_DEBUG", True))
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-if environ.get("DJANGO_ALLOWED_HOSTS"):
-    ALLOWED_HOSTS += environ.get("ALLOWED_HOSTS", '').split(",")
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"] + environ.get("ALLOWED_HOSTS", "").split(",")
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 
 INTERNAL_IPS = [
@@ -49,23 +45,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
     "django_htmx",
     "tailwind",
-    "nikitakirenkov_ru",
     "theme",
-    "django_browser_reload",
     "nested_admin",
     "food",
-    "tasks",
-    "users",
 ]
+if DEBUG:
+    INSTALLED_APPS += ["django_browser_reload", "django_extensions"]
 
 TAILWIND_APP_NAME = "theme"
-
-NPM_BIN_PATH = environ.get("NPM_BIN_PATH", None)
-
-AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -96,11 +85,6 @@ TEMPLATES = [
             ],
         },
     },
-    {
-        "BACKEND": "django.template.backends.jinja2.Jinja2",
-        "APP_DIRS": True,
-        "OPTIONS": {"environment": "nikitakirenkov_ru.jinja.environment", "extensions": ["jinja2.ext.i18n"]},
-    },
 ]
 
 WSGI_APPLICATION = "nikitakirenkov_ru.wsgi.application"
@@ -113,12 +97,12 @@ LOGIN_URL = "/auth/login/"
 
 DATABASES = {
     "default": {
-        "ENGINE": environ.get("DB_ENGINE", 'django.db.backends.postgresql'),
-        "NAME": environ.get("DB_NAME"),
-        "USER": environ.get("DB_USER"),
-        "PASSWORD": environ.get("DB_PASSWORD"),
-        "HOST": environ.get("DB_HOST"),
-        "PORT": environ.get("DB_PORT"),
+        "ENGINE": environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": environ.get("DB_NAME", "database.sqlite3"),
+        "USER": environ.get("DB_USER", None),
+        "PASSWORD": environ.get("DB_PASSWORD", None),
+        "HOST": environ.get("DB_HOST", None),
+        "PORT": environ.get("DB_PORT", None),
     }
 }
 
@@ -172,9 +156,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATIC_ROOT = environ.get("STATIC_ROOT")
+STATIC_ROOT = environ.get("STATIC_ROOT", None)
 
-STATICFILES_DIRS = ["nikitakirenkov_ru/static/"]
+STATICFILES_DIRS = ["static/"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
