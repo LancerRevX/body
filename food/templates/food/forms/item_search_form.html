@@ -1,5 +1,5 @@
 {% load i18n %}
-<form class="flex flex-col items-center min-h-0"
+<form class="flex flex-col items-center mb-4"
       id="item-search-form"
       x-ref="itemSearchForm"
       hx-get="{% url "food:records:items" date=day.date meal_id=meal.id %}"
@@ -16,7 +16,7 @@
         </div>
     </div> {% endcomment %}
 
-    <input class="w-full mb-4"
+    <input class="w-full"
            type="search"
            name="query"
            id="item-search-input"

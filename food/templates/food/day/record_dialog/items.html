@@ -10,7 +10,8 @@
                hx-get="{% url "food:records:create" date=day.date meal_id=meal.id %}"
                hx-target="#record-dialog-bottom"
                hx-swap="innerHTML"
-               x-ref="item{{ item.id }}" />
+               x-ref="item{{ item.id }}"
+               {% if item.id == record_form.item.initial %}x-init="$el.scrollIntoView({block: 'center'})" checked{% endif %} />
         <label for="item_{{ item.id }}"
                class="cursor-pointer flex-1 py-1"
                title="{{ item }}">{{ item|capfirst }}</label>

@@ -35,10 +35,10 @@ urlpatterns = [
                 [
                     path("create", views.create_record, name="create"),
                     path("items", views.index_items, name="items"),
+                    path("<int:record_id>/edit", views.edit_record, name="edit")
                 ],
                 "records",
             )
         ),
     ),
-    path("days/<date:date>/meals/<int:meal_id>/records/<int:record_id>/edit", views.edit_record, name="edit-record"),
 ]

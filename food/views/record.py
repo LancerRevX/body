@@ -40,7 +40,7 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
 
     response = render(
         request,
-        "food/record_dialog.html",
+        "food/day/record_dialog.html",
         {
             "day": day,
             "meal": meal,
@@ -65,7 +65,7 @@ def edit_record(
     meal = get_object_or_404(day.meals, id=meal_id)
     record = get_object_or_404(meal.records, id=record_id)
 
-    item_search_form = ItemSearchForm(request.user)
+    item_search_form = ItemSearchForm()
 
     record_form = RecordForm(instance=record)
 
@@ -78,26 +78,19 @@ def edit_record(
     else:
         item = record.item
 
-    if request.htmx.trigger_name == "item":
-        return render(
-            request,
-            "food/forms/record_form.html",
-            {"day": day, "meal": meal, "item": item, "form": record_form},
-        )
-
-    response = render(
+    return render(
         request,
-        "food/record_dialog.html",
+        "food/day/record_dialog.html",
         {
             "day": day,
             "meal": meal,
             "item": item,
             "items": request.user.food_items.all(),
             "item_search_form": item_search_form,
+            'record': record,
             "record_form": record_form,
         },
     )
-    return trigger_client_event(response, "open-record-dialog")
 
 
 @require_GET
@@ -149,8 +142,11 @@ class RecordView(LoginRequiredMixin, View):
             return HttpResponseBadRequest()
         record_form = PartialRecordForm(form_data, instance=record)
 
-        if not record_form.is_valid() or not record_form.has_changed():
+        if not record_form.is_valid():
             return HttpResponseBadRequest()
+
+        if not record_form.has_changed():
+            return HttpResponse(status=204)
 
         record_form.save()
 
@@ -167,16 +163,15 @@ class RecordView(LoginRequiredMixin, View):
         if record_form.changed_data == ["position"]:
             return HttpResponse(status=204)
 
-        response = render(
+        return render(
             request,
-            "food/htmx/update_record.html",
+            "food/day/meal/record.html",
             {
                 "day": day,
                 "meal": meal,
                 "record": record,
             },
         )
-        return trigger_client_event(response, "close-record-dialog")
 
     def delete(
         self,
