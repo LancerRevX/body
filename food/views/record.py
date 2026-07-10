@@ -24,17 +24,18 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
     dialog_form = RecordDialogForm(request.user, request.GET)
     if not dialog_form.is_valid():
         return HttpResponseBadRequest()
-    item = dialog_form.cleaned_data['item']
+    item = dialog_form.cleaned_data["item"]
 
-    item_search_form = ItemSearchForm(request.user)
+    item_search_form = ItemSearchForm()
 
-    record_form = RecordForm()
+    record = Record(item=item)
+    record_form = RecordForm(instance=record)
 
-    if request.htmx.trigger_name == "item":
+    if request.headers["HX-Target"] == "record-dialog-bottom":
         return render(
             request,
-            "food/forms/record_form.html",
-            {"day": day, "meal": meal, 'item': item, "form": record_form},
+            "food/day/record_dialog/bottom.html",
+            {"day": day, "meal": meal, "item": item, "form": record_form},
         )
 
     response = render(
@@ -43,7 +44,7 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
         {
             "day": day,
             "meal": meal,
-            'item': item,
+            "item": item,
             "items": request.user.food_items.all(),
             "item_search_form": item_search_form,
             "record_form": record_form,
@@ -71,9 +72,9 @@ def edit_record(
     dialog_form = RecordDialogForm(request.user, request.GET)
     if not dialog_form.is_valid():
         return HttpResponseBadRequest()
-    
-    if dialog_form.cleaned_data['item']:
-        item = dialog_form.cleaned_data['item']
+
+    if dialog_form.cleaned_data["item"]:
+        item = dialog_form.cleaned_data["item"]
     else:
         item = record.item
 
@@ -81,7 +82,7 @@ def edit_record(
         return render(
             request,
             "food/forms/record_form.html",
-            {"day": day, "meal": meal, 'item': item, "form": record_form},
+            {"day": day, "meal": meal, "item": item, "form": record_form},
         )
 
     response = render(
@@ -90,7 +91,7 @@ def edit_record(
         {
             "day": day,
             "meal": meal,
-            'item': item,
+            "item": item,
             "items": request.user.food_items.all(),
             "item_search_form": item_search_form,
             "record_form": record_form,
@@ -104,9 +105,11 @@ def edit_record(
 def index_items(request: HttpRequest, date, meal_id):
     day = get_object_or_404(Day, user=request.user, date=date)
     meal = get_object_or_404(day.meals, id=meal_id)
-    item_search_form = ItemSearchForm(request.user, request.GET)
+    item_search_form = ItemSearchForm(request.GET)
 
-    return render(request, "food/items.html", {'day': day, 'meal': meal, "items": item_search_form.get_items()})
+    return render(
+        request, "food/day/record_dialog/items.html", {"day": day, "meal": meal, "items": item_search_form.get_items(request.user)}
+    )
 
 
 class RecordView(LoginRequiredMixin, View):
@@ -122,13 +125,9 @@ class RecordView(LoginRequiredMixin, View):
         position = meal.records.count()
         record = meal.records.create(**record_form.cleaned_data, position=position)
 
-        response = render(
-            request,
-            "food/htmx/store_record.html",
-            {"day": day, "meal": meal, "record": record},
-            status=201,
-        )
-        return trigger_client_event(response, "close-record-dialog")
+        response = render(request, "food/day/meal.html", {"day": day, "meal": meal}, status=201)
+        # return trigger_client_event(response, "close-record-dialog")
+        return response
 
     def patch(
         self,
@@ -145,9 +144,7 @@ class RecordView(LoginRequiredMixin, View):
 
         form_data = QueryDict(request.body)
         try:
-            PartialRecordForm = modelform_factory(
-                Record, form=RecordForm, fields=form_data.keys()
-            )
+            PartialRecordForm = modelform_factory(Record, form=RecordForm, fields=form_data.keys())
         except FieldError:
             return HttpResponseBadRequest()
         record_form = PartialRecordForm(form_data, instance=record)
@@ -159,15 +156,11 @@ class RecordView(LoginRequiredMixin, View):
 
         new_position = record.position
         if new_position > old_position:
-            for sibling in meal.records.filter(
-                position__range=(old_position, new_position)
-            ).exclude(id=record.id):
+            for sibling in meal.records.filter(position__range=(old_position, new_position)).exclude(id=record.id):
                 sibling.position -= 1
                 sibling.save()
         elif new_position < old_position:
-            for sibling in meal.records.filter(
-                position__range=(new_position, old_position)
-            ).exclude(id=record.id):
+            for sibling in meal.records.filter(position__range=(new_position, old_position)).exclude(id=record.id):
                 sibling.position += 1
                 sibling.save()
 
@@ -201,6 +194,4 @@ class RecordView(LoginRequiredMixin, View):
             sibling.save()
         record.delete()
 
-        return render(
-            request, "food/htmx/destroy_record.html", {"day": day, "meal": meal}
-        )
+        return HttpResponse()

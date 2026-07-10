@@ -7,7 +7,7 @@
         <meta name="keywords" content="">
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% translate "food"|title %}</title>
+        <title>{% translate "food"|title %}{% if debug %} DEBUG{% endif %}</title>
         <script defer src="{% static "food/record.js" %}"></script>
         {% if not day.is_locked %}
             <script defer src="{% static "scripts/alpine.sort.min.js" %}"></script>
@@ -42,7 +42,9 @@
         </main>
         {% include "food/day/summary.html" %}
         {% include "food/burger_menu.html" %}
-        <div id="record-dialog"></div>
+
+        <dialog id="record-dialog"></dialog>
+
         <div id="indicator"
              class="hidden fixed [&.htmx-request]:flex justify-center items-center backdrop-blur-md w-screen h-screen z-30 top-0 left-0">
             <svg xmlns="http://www.w3.org/2000/svg"

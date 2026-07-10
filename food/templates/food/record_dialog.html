@@ -2,22 +2,26 @@
 <dialog id="record-dialog"
         x-ref="recordDialog"
         class="p-4 w-[330px] h-[480px] overflow-hidden max-h-none open:flex flex-col gap-4"
-        hx-swap-oob="true"
         hx-swap="show:#item_{{ item.id }}"
-        x-init="$el.showModal(); {% if item %} $refs['item{{ item.id }}'].scrollIntoView({block: 'center'}) {% endif %}"
-        @close-record-dialog.window="$el.close()"
-        {% if item %} x-data="{ item: {{ item.id }} }" {% endif %}>
-        <h2 class="block text-center text-lg font-semibold">
-            {% if record_form.instance.id %}
-                {% translate "Edit record" %}
-            {% else %}
-                {% translate "Add new record" %}
-            {% endif %}
-        </h2>
+        x-init="$el.showModal(); {% if item %}$refs['item{{ item.id }}'].scrollIntoView({block: 'center'}){% endif %}"
+        {% if item %}x-data="{ item: {{ item.id }} }"{% endif %}>
+    <h2 class="block text-center text-lg font-semibold">
+        {% if record_form.instance.id %}
+            {% translate "Edit record" %}
+        {% else %}
+            {% translate "Add new record" %}
+        {% endif %}
+    </h2>
     {% include "food/forms/item_search_form.html" with form=item_search_form %}
-    <div id="items"
-         class="flex-1 flex flex-col min-h-0 overflow-y-scroll">
-        {% include "food/items.html" %}
-    </div>
-    {% include "food/forms/record_form.html" with form=record_form %}
+    <form id="record-form"
+          class="min-h-0 flex flex-col gap-4"
+          {% if form.instance.id %} hx-patch="{% url "food:records" date=day.date meal_id=meal.id record_id=form.instance.id %}" {% else %} hx-post="{% url "food:records" date=day.date meal_id=meal.id %}" hx-target="#meal-{{ meal.position }}-records" hx-swap="beforeend"{% endif %}
+          x-data="{ type: '{{ form.type.value }}' }"
+          x-on:submit="$refs.recordDialog.close()">
+        <div id="record-dialog-items"
+             class="flex-1 flex flex-col min-h-0 overflow-y-scroll">
+            {% include "food/day/record_dialog/items.html" %}
+        </div>
+        <div id="record-dialog-bottom">{% include "food/day/record_dialog/bottom.html" with form=record_form %}</div>
+    </form>
 </dialog>

@@ -2,7 +2,8 @@
 <article id="meal-{{ meal.position }}"
          class="min-h-10 rounded-xl border-2 mb-4 overflow-hidden [&.sortable-drag]:!bg-zinc-200 [&.sortable-drag]:!border-zinc-200 [&:nth-child(1n)]:bg-green-300 [&:nth-child(2n)]:bg-red-300 [&:nth-child(3n)]:bg-blue-300 [&:nth-child(1n)]:border-green-300 [&:nth-child(2n)]:border-red-300 [&:nth-child(3n)]:border-blue-300"
          x-sort:item="$data"
-         x-data="{ position: {{ meal.position }} }">
+         x-data="{ position: {{ meal.position }} }"
+         hx-swap-oob="false">
     <form hx-patch="{% url "food:meals" date=day.date meal_id=meal.id %}"
           x-init="$watch('position', () => $dispatch('submit'))">
         <input type="hidden" name="position" x-model="position">
@@ -50,7 +51,8 @@
             <button class="py-1 w-full flex justify-center rounded-lg border-2 border-lime-500 bg-lime-300 cursor-pointer"
                     title="{% translate "Add new record" %}"
                     hx-get="{% url "food:records:create" date=day.date meal_id=meal.id %}"
-                    hx-swap="none"
+                    hx-target="#record-dialog"
+                    hx-swap="outerHTML"
                     hx-indicator="#indicator">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      fill="none"

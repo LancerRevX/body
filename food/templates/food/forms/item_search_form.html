@@ -4,8 +4,7 @@
       x-ref="itemSearchForm"
       hx-get="{% url "food:records:items" date=day.date meal_id=meal.id %}"
       hx-trigger="input from:#item-search-input delay:200ms,submit,change"
-      hx-target="#items"
-      hx-swap-oob="true">
+      hx-target="#record-dialog-items">
 
     {% comment %} <div class="overflow-x-scroll pb-2">
         <div class="flex flex-row gap-2">

@@ -25,42 +25,20 @@ urlpatterns = [
     path("days/", views.DayView.as_view(), name="days"),
     path("days/<date:date>/", views.DayView.as_view(), name="days"),
     path("days/<date:date>/meals/", views.MealView.as_view(), name="meals"),
-    path(
-        "days/<date:date>/meals/<int:meal_id>/",
-        views.MealView.as_view(),
-        name="meals",
-    ),
+    path("days/<date:date>/meals/<int:meal_id>/", views.MealView.as_view(), name="meals"),
+    path("days/<date:date>/meals/<int:meal_id>/records/", views.RecordView.as_view(), name="records"),
+    path("days/<date:date>/meals/<int:meal_id>/records/<int:record_id>/", views.RecordView.as_view(), name="records"),
     path(
         "days/<date:date>/meals/<int:meal_id>/records/",
-        views.RecordView.as_view(),
-        name="records",
+        include(
+            (
+                [
+                    path("create", views.create_record, name="create"),
+                    path("items", views.index_items, name="items"),
+                ],
+                "records",
+            )
+        ),
     ),
-    path(
-        "days/<date:date>/meals/<int:meal_id>/records/<int:record_id>/",
-        views.RecordView.as_view(),
-        name="records",
-    ),
-    path(
-        "days/<date:date>/meals/<int:meal_id>/records/",
-        include((
-            [
-                path(
-                    "create",
-                    views.create_record,
-                    name="create",
-                ),
-                path(
-                    'items',
-                    views.index_items,
-                    name="items"
-                )
-            ],
-            "records",
-        )),
-    ),
-    path(
-        "days/<date:date>/meals/<int:meal_id>/records/<int:record_id>/edit",
-        views.edit_record,
-        name="edit-record",
-    )
+    path("days/<date:date>/meals/<int:meal_id>/records/<int:record_id>/edit", views.edit_record, name="edit-record"),
 ]

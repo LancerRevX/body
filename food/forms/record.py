@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.db.models import QuerySet, Max, Min
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 from ..models import Day, Group, Item, Record, Meal
 
@@ -10,20 +11,14 @@ from ..models import Day, Group, Item, Record, Meal
 class ItemSearchForm(forms.Form):
     query = forms.CharField(max_length=128, required=False, empty_value="", initial="")
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["group"] = forms.ModelChoiceField(
-            user.food_groups.all(), required=False
-        )
-        self.queryset = user.food_items.all()
 
-    def get_items(self) -> QuerySet | None:
-
+    def get_items(self, user: User) -> QuerySet | None:
         if not self.is_valid():
             return None
-        items = self.queryset
-        if group := self.cleaned_data["group"]:
-            items = items.filter(group=group)
+        
+        queryset = user.food_items.all()
         if query := self.cleaned_data["query"]:
 
             def filter_item(item):
@@ -31,9 +26,9 @@ class ItemSearchForm(forms.Form):
                     return True
                 return False
 
-            items = filter(filter_item, items)
+            queryset = filter(filter_item, queryset)
 
-        return items
+        return queryset
 
 
 class RecordDialogForm(forms.Form):
@@ -50,15 +45,23 @@ class RecordForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        try:
+            if Record.Type.PIECE in self.instance.item.get_available_record_types():
+                self['type'].initial = Record.Type.PIECE
+                self['value'].initial = 1
+        except Record.item.RelatedObjectDoesNotExist:
+            pass
+
     def clean(self):
-        type = self.cleaned_data.get("type")
-        item = self.cleaned_data.get("item")
-        if not type or not item:
+        super().clean()
+        if self.errors:
             return
 
+        type = self.cleaned_data['type']
+        item = self.cleaned_data['item']
         if type not in item.get_available_record_types():
             raise ValidationError(f'type "{type}" is not supported by item "{item}"')
 
     class Meta:
         model = Record
-        fields = ["type", "value", "item"]
+        fields = ['item', "type", "value"]

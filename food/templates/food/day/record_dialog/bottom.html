@@ -1,0 +1,41 @@
+{% load i18n %}
+<fieldset class="flex flex-col gap-4 items-center">
+    <div class="flex flex-row">
+        {% for type in form.instance.Type %}
+            <label for="{{ form.type.id_for_label }}_{{ type.value }}"
+                   class="cursor-pointer has-[:checked]:bg-green-500 has-[:checked]:text-white has-[:checked]:font-semibold has-[:disabled]:bg-gray-100 has-[:disabled]:!border-zinc-400 has-[:disabled]:!text-zinc-600 has-[:disabled]:!font-normal border-y-2 border-r-2 border-green-600 first:rounded-l-xl first:border-2 last:rounded-e-xl py-1 w-20 text-center">
+                {{ type.label }}
+                <input type="radio"
+                       name="{{ form.type.html_name }}"
+                       id="{{ form.type.id_for_label }}_{{ type.value }}"
+                       value="{{ type.value }}"
+                       required
+                       class="hidden"
+                       {% if type == form.type.initial %}checked{% endif %}
+                       {% if not item or type not in item.get_available_record_types %}disabled{% endif %}>
+            </label>
+        {% endfor %}
+    </div>
+    <div class="grid grid-cols-3 w-full gap-2">
+        <input type="number"
+               step="any"
+               name="value"
+               class="w-16 h-8 pr-1 col-start-2 justify-self-center w-full"
+               required
+               tabindex="3"
+               value="{{ form.value.value }}"
+               {% if not item %}disabled{% endif %}>
+        <div x-show="type == 'mass'">{% translate "g" %}</div>
+        <div class="" x-show="type == 'piece'">{% translate "pieces" %}</div>
+        <div x-show="type == 'pack'">{% translate "packs" %}</div>
+    </div>
+</fieldset>
+<div class="flex flex-row justify-evenly">
+    <button type="submit"
+            class="p-2 border border-zinc-400 rounded-xl w-24 disabled:text-gray-400"
+            tabindex="4"
+            {% if not item %}disabled{% endif %}>{% translate "OK" %}</button>
+    <button type="button"
+            class="p-2 border border-zinc-400 rounded-xl w-24"
+            @click="$refs.recordDialog.close()">{% translate "Cancel" %}</button>
+</div>
