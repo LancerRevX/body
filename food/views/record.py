@@ -10,6 +10,7 @@ from django.http import QueryDict, HttpResponse
 from django.forms import modelform_factory
 from django.core.exceptions import FieldError
 from django_htmx.http import trigger_client_event
+from django.template.loader import render_to_string
 
 from ..forms import RecordForm, RecordDialogForm, ItemSearchForm
 from ..models import Day, Record
@@ -87,7 +88,7 @@ def edit_record(
             "item": item,
             "items": request.user.food_items.all(),
             "item_search_form": item_search_form,
-            'record': record,
+            "record": record,
             "record_form": record_form,
         },
     )
@@ -101,7 +102,9 @@ def index_items(request: HttpRequest, date, meal_id):
     item_search_form = ItemSearchForm(request.GET)
 
     return render(
-        request, "food/day/record_dialog/items.html", {"day": day, "meal": meal, "items": item_search_form.get_items(request.user)}
+        request,
+        "food/day/record_dialog/items.html",
+        {"day": day, "meal": meal, "items": item_search_form.get_items(request.user)},
     )
 
 
@@ -118,9 +121,12 @@ class RecordView(LoginRequiredMixin, View):
         position = meal.records.count()
         record = meal.records.create(**record_form.cleaned_data, position=position)
 
-        response = render(request, "food/day/meal.html", {"day": day, "meal": meal}, status=201)
-        # return trigger_client_event(response, "close-record-dialog")
-        return response
+        content = (
+            render_to_string("food/day/meal/record.html", {"day": day, "meal": meal, "record": record})
+            + render_to_string("food/day/meal/summary.html", {"day": day, "meal": meal})
+            + render_to_string("food/day/summary.html", {"day": day})
+        )
+        return HttpResponse(content)
 
     def patch(
         self,
@@ -163,15 +169,12 @@ class RecordView(LoginRequiredMixin, View):
         if record_form.changed_data == ["position"]:
             return HttpResponse(status=204)
 
-        return render(
-            request,
-            "food/day/meal/record.html",
-            {
-                "day": day,
-                "meal": meal,
-                "record": record,
-            },
+        content = (
+            render_to_string("food/day/meal/record.html", {"day": day, "meal": meal, "record": record})
+            + render_to_string("food/day/meal/summary.html", {"day": day, "meal": meal})
+            + render_to_string("food/day/summary.html", {"day": day})
         )
+        return HttpResponse(content)
 
     def delete(
         self,
@@ -189,4 +192,7 @@ class RecordView(LoginRequiredMixin, View):
             sibling.save()
         record.delete()
 
-        return HttpResponse()
+        content = render_to_string("food/day/meal/summary.html", {"day": day, "meal": meal}) + render_to_string(
+            "food/day/summary.html", {"day": day}
+        )
+        return HttpResponse(content)

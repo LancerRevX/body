@@ -2,8 +2,7 @@
 {% with divider_class="flex flex-row justify-center items-center relative last:after:hidden after:block after:absolute after:w-[2px] after:bg-slate-300 after:h-[0.85rem] after:right-0" %}
     <article class="flex flex-col  border-2 rounded-lg border-slate-300 cursor-context-menu"
              x-sort:item="{{ record.position }}"
-             id="meal-{{ meal.position }}-record-{{ record.position }}"
-             hx-swap-oob="true">
+             id="meal-{{ meal.position }}-record-{{ record.position }}">
         <header class="flex flex-row border-b-2 border-zinc-300 h-8">
             {% if not day.is_locked %}
                 <div class="w-8 flex border-r-2 border-inherit flex-row justify-center items-center cursor-grab active:cursor-grabbing"
