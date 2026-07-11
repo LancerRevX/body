@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.http import QueryDict
 from django.core.exceptions import BadRequest
+from django.template.loader import render_to_string
 
 from ..forms import MealForm
 from ..models import Day
@@ -60,4 +61,5 @@ class MealView(LoginRequiredMixin, View):
             sibling.save()
         meal.delete()
 
-        return HttpResponse()
+        content = render_to_string("food/day/summary.html", {"day": day})
+        return HttpResponse(content)
