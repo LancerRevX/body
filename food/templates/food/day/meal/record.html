@@ -52,7 +52,7 @@
                 <button class="w-8 flex justify-center items-center border-l-2 border-inherit"
                         hx-delete="{% url "food:records" date=day.date meal_id=meal.id record_id=record.id %}"
                         hx-confirm="{% translate "Delete record?" %}"
-                        hx-target="#meal_{{ meal.position }}_record_{{ record.position }}"
+                        hx-target="#meal-{{ meal.position }}-record-{{ record.position }}"
                         hx-swap="delete">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          fill="none"
