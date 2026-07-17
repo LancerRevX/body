@@ -79,6 +79,7 @@ class Day(models.Model):
     class Meta:
         verbose_name = _("day")
         verbose_name_plural = _("days")
+        ordering=['-date']
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "date"], name="unique_date_for_user"

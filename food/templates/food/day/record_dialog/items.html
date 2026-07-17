@@ -1,19 +1,22 @@
-{% for item in items %}
-    <div class="flex flex-row has-[:checked]:bg-green-200 has-[:checked]:outline-2 outline-green-300 cursor-pointer break-all items-center gap-2 pl-1">
-        <input id="item_{{ item.id }}"
-               class="cursor-pointer checked:bg-green-500 active:bg-green-500 focus:!bg-green-500 focus:ring-0"
-               type="radio"
-               name="item"
-               value="{{ item.id }}"
-               tabindex="2"
-               required
-               hx-get="{% url "food:records:create" date=day.date meal_id=meal.id %}"
-               hx-target="#record-dialog-bottom"
-               hx-swap="innerHTML"
-               x-ref="item{{ item.id }}"
-               {% if item.id == record_form.item.initial %}x-init="$el.scrollIntoView({block: 'center'})" checked{% endif %} />
-        <label for="item_{{ item.id }}"
-               class="cursor-pointer flex-1 py-1"
-               title="{{ item }}">{{ item|capfirst }}</label>
-    </div>
-{% endfor %}
+<div id="record-dialog-items"
+     class="flex-1 flex flex-col overflow-y-scroll group-[.htmx-request]:hidden">
+    {% for item in items %}
+        <div class="flex flex-row has-[:checked]:bg-green-200 has-[:checked]:outline-2 outline-green-300 cursor-pointer break-all items-center gap-2 pl-1">
+            <input id="item_{{ item.id }}"
+                   class="cursor-pointer checked:bg-green-500 active:bg-green-500 focus:!bg-green-500 focus:ring-0"
+                   type="radio"
+                   name="item"
+                   value="{{ item.id }}"
+                   tabindex="2"
+                   required
+                   hx-get="{% url "food:records:create" date=day.date meal_id=meal.id %}"
+                   hx-target="#record-dialog-bottom"
+                   hx-swap="innerHTML"
+                   x-ref="item{{ item.id }}"
+                   {% if item.id == record_form.item.initial %}x-init="$el.scrollIntoView({block: 'center'})" checked{% endif %} />
+            <label for="item_{{ item.id }}"
+                   class="cursor-pointer flex-1 py-1"
+                   title="{{ item }}">{{ item|capfirst }}</label>
+        </div>
+    {% endfor %}
+</div>

@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==5.0"
+django = "*"
 django-nested-admin = "*"
 django-extensions = "*"
 django-browser-reload = "*"

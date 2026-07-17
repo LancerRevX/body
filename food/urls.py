@@ -11,10 +11,10 @@ app_name = "food"
 class DateConverter:
     regex = r"\d\d\d\d-\d\d-\d\d"
 
-    def to_python(self, value):
+    def to_python(self, value) -> datetime.date:
         return datetime.date.fromisoformat(value)
 
-    def to_url(self, value):
+    def to_url(self, value) -> str:
         return value.isoformat()
 
 
@@ -34,7 +34,7 @@ urlpatterns = [
             (
                 [
                     path("create", views.create_record, name="create"),
-                    path("items", views.index_items, name="items"),
+                    path("items", views.search_items, name="items"),
                     path("<int:record_id>/edit", views.edit_record, name="edit")
                 ],
                 "records",

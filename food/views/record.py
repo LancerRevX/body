@@ -27,7 +27,7 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
         return HttpResponseBadRequest()
     item = dialog_form.cleaned_data["item"]
 
-    item_search_form = ItemSearchForm()
+    item_search_form = ItemSearchForm(request.GET)
 
     if item is not None:
         record = Record(item=item)
@@ -49,7 +49,7 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
             "day": day,
             "meal": meal,
             "item": item,
-            "items": request.user.food_items.all(),
+            "items": item_search_form.get_items(request.user),
             "item_search_form": item_search_form,
             "record_form": record_form,
         },
@@ -99,16 +99,19 @@ def edit_record(
 
 @require_GET
 @login_required
-def index_items(request: HttpRequest, date, meal_id):
+def search_items(request: HttpRequest, date, meal_id):
     day = get_object_or_404(Day, user=request.user, date=date)
     meal = get_object_or_404(day.meals, id=meal_id)
     item_search_form = ItemSearchForm(request.GET)
 
-    return render(
-        request,
+    record_form = RecordForm()
+
+    content = render_to_string("food/day/record_dialog/bottom.html", {"form": record_form}) + render_to_string(
         "food/day/record_dialog/items.html",
         {"day": day, "meal": meal, "items": item_search_form.get_items(request.user)},
     )
+
+    return HttpResponse(content)
 
 
 class RecordView(LoginRequiredMixin, View):
