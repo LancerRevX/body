@@ -27,10 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-t@^iuc40=bc_b0)zh@^ld5(v$4kr6_6r+ganat=+)oh9-mzxc1"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(environ.get("DJANGO_DEBUG", True))
+DEBUG = bool(int(environ.get("DJANGO_DEBUG", 0)))
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"] + environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
-CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+ALLOWED_HOSTS = environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -97,12 +96,12 @@ LOGIN_URL = "/auth/login/"
 
 DATABASES = {
     "default": {
-        "ENGINE": environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": environ.get("DB_NAME", "database.sqlite3"),
-        "USER": environ.get("DB_USER", None),
-        "PASSWORD": environ.get("DB_PASSWORD", None),
-        "HOST": environ.get("DB_HOST", None),
-        "PORT": environ.get("DB_PORT", None),
+        "ENGINE": environ.get("DJANGO_DATABASE_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": environ.get("DJANGO_DATABASE_NAME", "database.sqlite3"),
+        "USER": environ.get("DJANGO_DATABASE_USER", None),
+        "PASSWORD": environ.get("DJANGO_DATABASE_PASSWORD", None),
+        "HOST": environ.get("DJANGO_DATABASE_HOST", None),
+        "PORT": environ.get("DJANGO_DATABASE_PORT", None),
     }
 }
 
@@ -156,7 +155,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATIC_ROOT = environ.get("STATIC_ROOT", None)
+STATIC_ROOT = environ.get("DJANGO_STATIC_ROOT", None)
 
 STATICFILES_DIRS = ["static/"]
 
