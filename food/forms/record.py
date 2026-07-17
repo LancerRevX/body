@@ -45,12 +45,15 @@ class RecordForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        try:
-            if Record.Type.PIECE in self.instance.item.get_available_record_types():
-                self['type'].initial = Record.Type.PIECE
-                self['value'].initial = 1
-        except Record.item.RelatedObjectDoesNotExist:
-            pass
+        if self.instance.pk is None:
+            return
+
+        if Record.Type.PIECE in self.instance.item.get_available_record_types():
+            self['type'].initial = Record.Type.PIECE
+            self['value'].initial = 1
+        else:
+            self['type'].initial = Record.Type.MASS
+            self['value'].initial = 100
 
     def clean(self):
         super().clean()

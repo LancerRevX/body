@@ -29,8 +29,11 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
 
     item_search_form = ItemSearchForm()
 
-    record = Record(item=item)
-    record_form = RecordForm(instance=record)
+    if item is not None:
+        record = Record(item=item)
+        record_form = RecordForm(instance=record)
+    else:
+        record_form = RecordForm()
 
     if request.headers["HX-Target"] == "record-dialog-bottom":
         return render(

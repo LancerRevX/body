@@ -1,23 +1,24 @@
-<a class="flex-1 flex justify-center items-center {% if peer.is_today %}text-black {% else %} text-zinc-500 {% endif %}"
+<a class="flex-1 flex gap-2 justify-center items-center {% if peer.is_today %}text-black {% else %} text-zinc-500 {% endif %}"
    href="{% url "food:days" date=peer.date %}"
    title="{{ peer.date|date:"SHORT_DATE_FORMAT" }} {{ peer.date|date:"l" }}">
-    <span class="hidden sm:block">{{ peer.date|date:"SHORT_DATE_FORMAT" }} {{ peer.date|date:"l" }}</span>
     {% if peer.date < day.date %}
         <svg xmlns="http://www.w3.org/2000/svg"
              fill="none"
              viewBox="0 0 24 24"
              stroke-width="1.5"
              stroke="currentColor"
-             class="size-6 sm:hidden">
+             class="size-6 stroke-black sm:stroke-current">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
-    {% else %}
+    {% endif %}
+    <span class="hidden sm:block mb-0.5">{{ peer.date|date:"SHORT_DATE_FORMAT" }} {{ peer.date|date:"l" }}</span>
+    {% if peer.date > day.date %}
         <svg xmlns="http://www.w3.org/2000/svg"
              fill="none"
              viewBox="0 0 24 24"
              stroke-width="1.5"
              stroke="currentColor"
-             class="size-6 sm:hidden">
+             class="size-6 stroke-black sm:stroke-current">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
     {% endif %}

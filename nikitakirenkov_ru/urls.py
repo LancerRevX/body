@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path("_nested_admin/", include("nested_admin.urls")),
@@ -26,6 +27,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
+    path('', RedirectView.as_view(pattern_name='food:days')),
     path("admin/", admin.site.urls),
     path("food/", include("food.urls")),
 )
