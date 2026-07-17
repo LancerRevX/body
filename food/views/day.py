@@ -34,6 +34,21 @@ class DayView(LoginRequiredMixin, View):
         else:
             day = {"date": date}
 
+        left_peer_date = date - datetime.timedelta(days=1)
+        left_peer_query = Day.objects.filter(date=left_peer_date)
+        if left_peer_query.exists():
+            left_peer = left_peer_query.get()
+        else:
+            left_peer = {'date': left_peer_date}
+        right_peer_date = date + datetime.timedelta(days=1)
+        right_peer_query = Day.objects.filter(date=right_peer_date)
+        if right_peer_query.exists():
+            right_peer = right_peer_query.get()
+        else:
+            right_peer = {'date': right_peer_date}
+
+        context = {'day': day, 'left_peer': left_peer, 'right_peer': right_peer}
+
         if request.htmx:
             template_names = [
                 "food/day/date.html",
@@ -44,7 +59,7 @@ class DayView(LoginRequiredMixin, View):
                 "food/day/summary.html",
             ]
             html = "".join(
-                render_to_string(template_name, {"day": day}, request)
+                render_to_string(template_name, context, request)
                 for template_name in template_names
             )
             return HttpResponse(html, status=200)
@@ -52,7 +67,7 @@ class DayView(LoginRequiredMixin, View):
         return render(
             request,
             "food/day.html",
-            {"day": day, "user": request.user},
+            context
         )
 
     def patch(self, request: HttpRequest, date: datetime.date):

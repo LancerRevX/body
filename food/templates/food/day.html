@@ -15,7 +15,9 @@
         <script defer src="{% static "scripts/alpine.focus.min.js" %}"></script>
         <!-- Alpine Core -->
         <script defer src="{% static "scripts/alpine.min.js" %}"></script>
-        <script src="{% static "scripts/htmx.min.js" %}" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
+        <script src="{% static "scripts/htmx.min.js" %}"
+                integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
+                crossorigin="anonymous"></script>
         {% tailwind_css %}
     </head>
     <body hx-headers='{ "X-CSRFToken": "{{ csrf_token }}" }'
@@ -32,7 +34,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
             </button>
+            {% include "food/day/peer_date.html" with peer=left_peer %}
             {% include "food/day/date.html" %}
+            {% include "food/day/peer_date.html" with peer=right_peer %}
             {% include "food/day/lock.html" %}
         </header>
         <main class="mt-12 mb-12 p-4 pb-0 max-w-sm mx-auto flex flex-col items-center">
@@ -42,9 +46,7 @@
         </main>
         {% include "food/day/summary.html" %}
         {% include "food/burger_menu.html" %}
-
         <dialog id="record-dialog"></dialog>
-
         <div id="indicator"
              class="hidden fixed [&.htmx-request]:flex justify-center items-center backdrop-blur-md w-screen h-screen z-30 top-0 left-0">
             <svg xmlns="http://www.w3.org/2000/svg"

@@ -18,8 +18,11 @@
           {% if record %} hx-patch="{% url "food:records" date=day.date meal_id=meal.id record_id=record.id %}" hx-target="#meal-{{ meal.position }}-record-{{ record.position }}" hx-swap="outerHTML" {% else %} hx-post="{% url "food:records" date=day.date meal_id=meal.id %}" hx-target="#meal-{{ meal.position }}-records" hx-swap="beforeend"{% endif %}
           x-data="{ type: '{{ form.type.value }}' }"
           x-on:submit="$refs.recordDialog.close()">
+        {% comment %} <div id="record-dialog-indicator" class="w-64 h-64 [&.htmx-request]:bg-red-600"></div> {% endcomment %}
         <div id="record-dialog-items"
-             class="flex-1 flex flex-col overflow-y-scroll">{% include "food/day/record_dialog/items.html" %}</div>
+             class="flex-1 flex flex-col overflow-y-scroll [&.htmx-swapping]:hidden [&.htmx-settling]:hidden">
+            {% include "food/day/record_dialog/items.html" %}
+        </div>
         <div id="record-dialog-bottom">{% include "food/day/record_dialog/bottom.html" with form=record_form %}</div>
     </form>
 </dialog>

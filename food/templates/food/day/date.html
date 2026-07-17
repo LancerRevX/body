@@ -1,15 +1,15 @@
-<div class="flex flex-row items-center justify-center flex-1 cursor-pointer"
+<div class="flex flex-row items-center justify-center cursor-pointer w-52 border-x border-zinc-200 font-semibold {% if day.is_today %}text-black {% else %} text-zinc-500 {% endif %}"
      id="date"
      hx-swap-oob="true"
      x-data
      @click="$refs.datePicker.showPicker()">
-    {{ day.date|date:"SHORT_DATE_FORMAT" }} {{ day.date|date:"l" }}
-    <input class="absolute invisible"
-           type="date"
-           name="date"
-           hx-get="{% url "food:days" %}"
-           hx-swap="none"
-           hx-push-url="true"
-           hx-indicator="#indicator"
-           x-ref="datePicker">
+     {{ day.date|date:"SHORT_DATE_FORMAT" }} {{ day.date|date:"l" }}
+     <input class="absolute invisible"
+            type="date"
+            name="date"
+            hx-get="{% url "food:days" %}"
+            hx-swap="none"
+            hx-push-url="true"
+            hx-indicator="#indicator"
+            x-ref="datePicker">
 </div>
