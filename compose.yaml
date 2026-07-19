@@ -1,8 +1,6 @@
 services:
   apache:
     build: .
-    ports:
-      - "${BODY_PORT}:80"
     environment:
       DJANGO_DATABASE_ENGINE: django.db.backends.postgresql
       DJANGO_DATABASE_HOST: db
@@ -10,8 +8,21 @@ services:
       DJANGO_DATABASE_USER: body
       DJANGO_DATABASE_PASSWORD: body
     env_file: .env
+    networks:
+      - my-net
   db:
     image: postgres:18.4
     environment:
       POSTGRES_PASSWORD: body
       POSTGRES_USER: body
+    volumes:
+      - body-db-data:/var/lib/postgresql
+    networks:
+      - my-net
+volumes:
+  body-db-data:
+    external: true
+networks:
+  my-net:
+    name: my-net
+    external: true
