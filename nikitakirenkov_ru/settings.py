@@ -164,22 +164,22 @@ STATICFILES_DIRS = ["static/"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# if environ.get('DJANGO_LOG_PATH'):
-#     LOGGING = {
-#         "version": 1,
-#         "disable_existing_loggers": False,
-#         "handlers": {
-#             "file": {
-#                 "level": "DEBUG",
-#                 "class": "logging.FileHandler",
-#                 "filename": environ['DJANGO_LOG_PATH'],
-#             },
-#         },
-#         "loggers": {
-#             "django": {
-#                 "handlers": ["file"],
-#                 "level": "DEBUG",
-#                 "propagate": True,
-#             },
-#         },
-#     }
+if environ.get('DJANGO_LOG_PATH'):
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "file": {
+                "level": "DEBUG",
+                "class": "logging.FileHandler",
+                "filename": environ['DJANGO_LOG_PATH'],
+            },
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["file"],
+                "level": "DEBUG",
+                "propagate": True,
+            },
+        },
+    }
