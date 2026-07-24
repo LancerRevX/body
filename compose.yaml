@@ -1,16 +1,16 @@
 services:
-  apache:
+  body-server:
     build: .
     environment:
       DJANGO_DATABASE_ENGINE: django.db.backends.postgresql
-      DJANGO_DATABASE_HOST: db
+      DJANGO_DATABASE_HOST: body-db
       DJANGO_DATABASE_NAME: body
       DJANGO_DATABASE_USER: body
       DJANGO_DATABASE_PASSWORD: body
     env_file: .env
     networks:
       - my-net
-  db:
+  body-db:
     image: postgres:18.4
     environment:
       POSTGRES_PASSWORD: body
