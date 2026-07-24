@@ -16,11 +16,8 @@ class ItemSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def get_items(self, user: User) -> QuerySet | None:
-        if not self.is_valid():
-            return None
-
-        if query := self.cleaned_data["query"]:
-
+        if self.is_valid() and self.cleaned_data["query"]:
+            query = self.cleaned_data["query"]
             queryset = user.food_items.all()
 
             def filter_item(item):

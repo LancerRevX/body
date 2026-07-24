@@ -27,7 +27,7 @@ def create_record(request: HttpRequest, date: datetime.date, meal_id: int):
         return HttpResponseBadRequest()
     item = dialog_form.cleaned_data["item"]
 
-    item_search_form = ItemSearchForm(request.GET)
+    item_search_form = ItemSearchForm()
 
     if item is not None:
         record = Record(item=item)
